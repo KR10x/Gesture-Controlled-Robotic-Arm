@@ -1,8 +1,5 @@
 # 6-DOF Gesture-Controlled Robotic Arm
 
-![Project Demo](Media/demo_video.gif) 
-> *(Note: Replace this placeholder with an actual GIF of your robotic arm in action)*
-
 ## 🚀 Project Overview
 [cite_start]This project features an advanced 6-degree-of-freedom (6-DOF) robotic arm that utilizes a computer vision interface for intuitive, contactless gesture-based control[cite: 14, 15]. [cite_start]Developed as part of the TA212 course, the system tracks hand movements in real-time and mirrors them through the mechanical assembly[cite: 2, 1140]. 
 
