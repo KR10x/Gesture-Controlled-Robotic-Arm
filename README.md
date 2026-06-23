@@ -1,60 +1,46 @@
 # 6-DOF Gesture-Controlled Robotic Arm
 
 ## 🚀 Project Overview
-[cite_start]This project features an advanced 6-degree-of-freedom (6-DOF) robotic arm that utilizes a computer vision interface for intuitive, contactless gesture-based control[cite: 14, 15]. [cite_start]Developed as part of the TA212 course, the system tracks hand movements in real-time and mirrors them through the mechanical assembly[cite: 2, 1140]. 
+This repository contains the hardware design, firmware, and software stack for a 6-degree-of-freedom (6-DOF) robotic arm. Developed as part of the TA212 course at IIT Kanpur, the system utilizes a computer vision interface to achieve intuitive, contactless, gesture-based control. The project demonstrates real-time kinematic mapping, translating human hand movements into precise mechanical actuation.
+
+## ✨ Key Features
+* **Real-Time Hand Tracking:** Utilizes MediaPipe and OpenCV to map 21 distinct hand landmarks in real-time.
+* **Kinematic Translation:** Maps complex spatial hand gestures to specific servo constraints.
+* **Motion Smoothing:** Implements a mathematical smoothing filter (`New Angle = 0.7 * Previous Angle + 0.3 * Current Angle`) to eliminate servo jitter and prevent jerky actuation.
+* **Lightweight Architecture:** Custom 21-part mechanical assembly optimized for a high strength-to-weight ratio.
 
 ## 🛠️ Hardware Specifications
-[cite_start]The mechanical assembly consists of 21 distinct manufactured parts, optimized for lightweight operation[cite: 16, 77]. 
+The mechanical assembly is designed for fluid motion and structural stability.
 
-* [cite_start]**Structural Components:** Built using a robust foundation of ACP base plates, 3D printed PLA arms, and a high-density metal shaft for stability[cite: 16, 49, 1243].
-* [cite_start]**Actuation:** Driven by 3x MG996R servo motors (for heavy base/shoulder movements) and 3x SG90 servo motors (for wrist/gripper movements)[cite: 49].
-* [cite_start]**Control Electronics:** An Arduino Uno handles the logic, paired with a PCA9685 servo driver ensuring stable multi-servo PWM control at 50 Hz[cite: 72, 73].
-* [cite_start]**Performance:** The maximum payload is limited by the shoulder joint to approximately 120-150 grams[cite: 70].
+* **Structural Components:** Robust foundation utilizing ACP base plates, 3D-printed PLA arms, and a high-density metal shaft.
+* **Actuation:** * 3x MG996R servos (Heavy base/shoulder movements)
+  * 3x SG90 servos (Wrist/gripper manipulation)
+* **Control Electronics:** Arduino Uno paired with a PCA9685 servo driver for stable, multi-channel PWM control at 50 Hz.
+* **Performance:** Maximum payload capacity of 120-150 grams at the shoulder joint.
 
-## 💻 Software & Control Pipeline
-[cite_start]The software stack is split into two main components: a Python-based computer vision script and C++ Arduino firmware[cite: 959, 960, 1081].
+## 💻 Software Architecture
+The control pipeline operates across a split Python/C++ stack:
 
-1. [cite_start]**Hand Tracking (Python):** Uses OpenCV to capture webcam video and MediaPipe to detect 21 specific hand landmarks[cite: 1146, 1147].
-2. [cite_start]**Kinematic Mapping:** Hand movements are translated into 6 distinct servo angles[cite: 1183]. For example:
-   * [cite_start]Left/Right hand movement controls the **Base**[cite: 1186].
-   * [cite_start]Up/Down wrist movement controls the **Shoulder**[cite: 1189].
-   * [cite_start]Fist detection automatically closes the **Claw/Gripper**[cite: 1178, 1180].
-3. [cite_start]**Serial Communication:** The calculated angles are sent as a comma-separated string to the Arduino via USB at a 115200 baud rate[cite: 968, 1204, 1206].
-4. [cite_start]**Motion Smoothing:** To prevent jerky, sudden movements, a mathematical smoothing filter (`New Angle = 0.7 * Previous Angle + 0.3 * Current Angle`) is applied[cite: 1200, 1201, 1202].
+1. **Vision & Logic (Python):** Captures webcam feeds and processes spatial data. 
+2. **Gesture Mapping:** * **Base:** Left/Right hand translation.
+   * **Shoulder:** Up/Down wrist translation.
+   * **Elbow:** Depth scaling (distance between wrist and index finger).
+   * **Claw/Gripper:** Automated clamping triggered by fist detection.
+3. **Serial Communication:** Formats and transmits calculated angles to the microcontroller via USB at a 115200 baud rate.
+4. **Hardware Execution (C++):** The Arduino firmware parses incoming serial packets, applies the smoothing algorithm, and drives the PCA9685.
 
-## 🔌 Circuit & Wiring
-* **PCA9685 to Arduino Uno:**
-  * [cite_start]VCC → 5V [cite: 944]
-  * [cite_start]GND → GND [cite: 945]
-  * [cite_start]SDA → A4 [cite: 947]
-  * [cite_start]SCL → A5 [cite: 948]
-* **Servos to PCA9685:**
-  * [cite_start]CH-0: Base [cite: 950]
-  * [cite_start]CH-1: Shoulder [cite: 951, 952]
-  * [cite_start]CH-2: Elbow [cite: 953]
-  * [cite_start]CH-3: Wrist Pitch [cite: 954]
-  * [cite_start]CH-4: Wrist Roll [cite: 955]
-  * [cite_start]CH-5: Claw [cite: 956]
+## 🔌 Circuit & Wiring Reference
 
-## ⚙️ How to Run
+**PCA9685 to Arduino Uno:**
+* `VCC` → `5V` | `GND` → `GND` | `SDA` → `A4` | `SCL` → `A5`
+
+**Servos to PCA9685 Channels:**
+* `CH-0`: Base | `CH-1`: Shoulder | `CH-2`: Elbow 
+* `CH-3`: Wrist Pitch | `CH-4`: Wrist Roll | `CH-5`: Claw
+
+## ⚙️ Installation & Usage
 
 ### 1. Prerequisites
-Ensure you have Python installed, then install the required dependencies:
-`pip install opencv-python mediapipe pyserial`
-
-### 2. Flash the Firmware
-1. Open the `Code/Arduino_Firmware/servo_driver.ino` file in the Arduino IDE.
-2. [cite_start]Install the **Adafruit PWM Servo Driver Library** via the Library Manager[cite: 1085].
-3. [cite_start]Connect your Arduino Uno and upload the code[cite: 1081].
-
-### 3. Launch the Interface
-1. [cite_start]Ensure your webcam is connected[cite: 1146].
-2. [cite_start]Update the `SERIAL_PORT` variable in the Python script to match your Arduino's COM port[cite: 967].
-3. Run the script:
-`python Code/Computer_Vision/gesture_control.py`
-
-## 📁 Repository Structure
-* `/CAD_Models` - STL and source files for the 3D-printed components.
-* `/Code` - Python vision scripts and Arduino C++ firmware.
-* `/Docs` - Full project report, cost analysis, and orthographic drawings.
-* `/Media` - Images, schematics, and demonstration videos.
+Ensure you have Python 3.x installed, then install the required dependencies:
+```bash
+pip install opencv-python mediapipe pyserial
