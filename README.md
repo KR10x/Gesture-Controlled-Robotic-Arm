@@ -38,9 +38,19 @@ The control pipeline operates across a split Python/C++ stack:
 * `CH-0`: Base | `CH-1`: Shoulder | `CH-2`: Elbow 
 * `CH-3`: Wrist Pitch | `CH-4`: Wrist Roll | `CH-5`: Claw
 
-## ⚙️ Installation & Usage
+## ⚙️ How to Run
 
 ### 1. Prerequisites
-Ensure you have Python 3.x installed, then install the required dependencies:
-```bash
-pip install opencv-python mediapipe pyserial
+Ensure you have Python installed, then install the required dependencies:
+`pip install opencv-python mediapipe pyserial`
+
+### 2. Flash the Firmware
+1. Open the `Code/Arduino_Firmware/servo_driver.ino` file in the Arduino IDE.
+2. Install the **Adafruit PWM Servo Driver Library** via the Library Manager.
+3. Connect your Arduino Uno and upload the code.
+
+### 3. Launch the Interface
+1. Ensure your webcam is connected.
+2. Update the `SERIAL_PORT` variable in the Python script to match your Arduino's COM port.
+3. Run the script:
+`python Code/Computer_Vision/gesture_control.py`
